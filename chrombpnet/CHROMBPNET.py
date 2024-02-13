@@ -13,6 +13,31 @@ logging.getLogger('matplotlib.font_manager').disabled = True
 
 def main():
 	args = parsers.read_parser()
+
+	# Jiaxin added: visualy check the different settings of plus shift and munus shift
+	# To verify the results of auto_shift_compute
+	if args.cmd == "check_shift":
+		if not os.path.exists(os.path.join(args.output_dir,"logs")):
+			os.makedirs(os.path.join(args.output_dir,"logs"), exist_ok=False)
+		else:
+			print("Writing into a folder already existing, pls double check")
+		
+		if not os.path.exists(os.path.join(args.output_dir,"auxiliary")):
+			os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=False)
+		else:
+			print("Writing into a folder already existing, pls double check")
+
+		if not os.path.exists(os.path.join(args.output_dir,"models")):
+			os.makedirs(os.path.join(args.output_dir,"models"), exist_ok=False)
+		else:
+			print("Writing into a folder already existing, pls double check")
+
+		if not os.path.exists(os.path.join(args.output_dir,"evaluation")):
+			os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=False)
+		else:
+			print("Writing into a folder already existing, pls double check")
+		
+		pipelines.checking_shift_pipeline(args)
 	
 	if args.cmd == "pipeline" or args.cmd == "train":
 		os.makedirs(os.path.join(args.output_dir,"logs"), exist_ok=False)
@@ -30,10 +55,28 @@ def main():
 		
 	elif args.cmd == "bias":
 		if args.cmd_bias == "pipeline" or args.cmd_bias == "train":
-			os.makedirs(os.path.join(args.output_dir,"logs"), exist_ok=False)
-			os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=False)
-			os.makedirs(os.path.join(args.output_dir,"models"), exist_ok=False)
-			os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=False)
+			'''
+			Jiaxin added file existing check before make the dictionary
+			'''
+			if os.path.exists(os.path.join(args.output_dir,"logs")):
+				print("Log directory has already exist, please double check!")
+			else:
+				os.makedirs(os.path.join(args.output_dir,"logs"), exist_ok=False)
+			
+			if os.path.exists(os.path.join(args.output_dir,"auxiliary")):
+				print("auxiliary directory has already exist, please double check!")
+			else:
+				os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=False)
+			
+			if os.path.exists(os.path.join(args.output_dir,"models")):
+				print("models directory has already exist, please double check!")
+			else:
+				os.makedirs(os.path.join(args.output_dir,"models"), exist_ok=False)
+			
+			if os.path.exists(os.path.join(args.output_dir,"evaluation")):
+				print("evaluation directory has already exist, please double check!")
+			else:
+				os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=False)
 
 			pipelines.train_bias_pipeline(args)
 		

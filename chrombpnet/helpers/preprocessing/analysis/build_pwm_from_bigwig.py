@@ -57,13 +57,16 @@ def main(args):
     print("non zero bigwig entries in the given chromosome: ", np.sum(bigwig_vals>0))
 
     # build pwm matrix - get PPM and background
-    motif, bg = get_pwm_bg(one_hot_seq, bigwig_vals, args.pwm_width)
+    motif, bg = get_pwm_bg(one_hot_seq, bigwig_vals, args.pwm_width) # Jiaxin: Yes, motif is a pmm
 
     # use modisco utils to plot
+    # Jiaxin added a figure title here
+    fig_tilte = f"{args.file_prefix} plus shift: {args.plus_shift} minus_shift: {args.minus_shift}"
     figsize=(20,2)
     fig = plt.figure(figsize=figsize)
     ax = fig.add_subplot(111) 
     viz_sequence.plot_weights_given_ax(ax=ax, array=viz_sequence.ic_scale(motif, background=bg))
+    ax.set_title(fig_tilte)
     plt.savefig(args.output_prefix+'.png')
     
 if __name__=="__main__":

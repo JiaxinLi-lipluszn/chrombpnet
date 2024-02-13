@@ -273,9 +273,19 @@ def train_bias_pipeline(args):
 	# Shift bam and convert to bigwig
 	import chrombpnet.helpers.preprocessing.reads_to_bigwig as reads_to_bigwig	
 	args.output_prefix = os.path.join(args.output_dir,"auxiliary/{}data".format(fpx))
-	args.plus_shift = None
-	args.minus_shift = None
-	reads_to_bigwig.main(args)
+	# args.plus_shift = None
+	# args.minus_shift = None
+	# Jiaxin removed these two lines so that the passed in plus shift and minus shift is not set to None
+	'''
+	Jiaxin: determine if the bigwig file already exist, is so, skip the reads_to_bigwig step
+	'''
+	if os.path.exists(args.output_prefix + "_unstranded.bw"):
+		bigwig_file_path = args.output_prefix + "_unstranded.bw"
+		print(f"BigWig file {bigwig_file_path} has already been generated, using the present one")
+	else:
+		bigwig_file_path = args.output_prefix + "_unstranded.bw"
+		print(f"BigWig file {bigwig_file_path} not generated, going into reads_to_bigwig()")
+		reads_to_bigwig.main(args)
 	
 	# QC bigwig
 	import chrombpnet.helpers.preprocessing.analysis.build_pwm_from_bigwig as build_pwm_from_bigwig	
@@ -290,7 +300,7 @@ def train_bias_pipeline(args):
 
 	# fetch hyperparameters for training
 	import chrombpnet.helpers.hyperparameters.find_bias_hyperparams as find_bias_hyperparams
-	args_copy = copy.deepcopy(args)
+	args_copy = copy.deepcopy(args)  #TODO：Why use deep copy here?
 	args_copy.output_prefix = os.path.join(args.output_dir,"auxiliary/{}".format(fpx))
 	find_bias_hyperparams.main(args_copy)
 	
@@ -452,3 +462,37 @@ def bias_model_qc(args):
 	args_copy.input_dir = args_copy.output_dir
 	args_copy.command = args_copy.cmd_bias
 	make_html_bias.main(args_copy)	
+
+def checking_shift_pipeline(args):
+	'''
+	Jiaxin added:
+	A function for pipeline to visualy check the different settings of plus shift and munus shift
+	To verify the results of auto_shift_compute
+	'''
+	import os
+
+    # Generate the shift prefix
+	shift_pfx = str(args.plus_shift) + '_' + str(args.minus_shift)
+
+	args.file_prefix = args.chr
+
+	if args.file_prefix:
+		fpx = args.file_prefix+"_"+shift_pfx+'_'
+	else:
+		fpx = ""+'_'+shift_pfx+'_'
+	
+    # Shift bam and convert to bigwig
+	import chrombpnet.helpers.preprocessing.reads_to_bigwig as reads_to_bigwig
+	args.output_prefix = os.path.join(args.output_dir,f"auxiliary/{fpx}data")
+	if not args.start_from_bigwig:
+		print("Convert the reads to bigwig!")
+		reads_to_bigwig.main(args)
+	else:
+		print("Starting from existing bigwig!")
+	
+    # QC bigwig
+	import chrombpnet.helpers.preprocessing.analysis.build_pwm_from_bigwig as build_pwm_from_bigwig
+	args.bigwig = os.path.join(args.output_dir,"auxiliary/{}data_unstranded.bw".format(fpx))
+	args.output_prefix = os.path.join(args.output_dir,"evaluation/{}bw_shift_qc".format(fpx))
+	args.pwd_width = 24
+	build_pwm_from_bigwig.main(args)
