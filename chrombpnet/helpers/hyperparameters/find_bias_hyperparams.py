@@ -81,8 +81,9 @@ def main(args):
     counts_threshold = np.quantile(peak_cnts,0.01)*args.bias_threshold_factor
     '''
     Jiaxin added: hard code a count threshold here
+    Feb_14: Removed the hard code line
     '''
-    counts_threshold = 6
+    # counts_threshold = 6
     print(f"Using threshold {counts_threshold}")
     assert(counts_threshold > 0) # counts threshold is 0 - all non peaks will be filtered!
    

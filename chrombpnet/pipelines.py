@@ -6,6 +6,9 @@ from chrombpnet.data import DefaultDataFile, get_default_data_path
 from chrombpnet.data import print_meme_motif_file
 import numpy as np
 
+#Jiaxin added
+import subprocess
+
 def chrombpnet_train_pipeline(args):
 
 	if args.file_prefix:
@@ -278,14 +281,25 @@ def train_bias_pipeline(args):
 	# Jiaxin removed these two lines so that the passed in plus shift and minus shift is not set to None
 	'''
 	Jiaxin: determine if the bigwig file already exist, is so, skip the reads_to_bigwig step
+	02/15/2024: Accept a new argument to take existing bigwig file from other path
 	'''
-	if os.path.exists(args.output_prefix + "_unstranded.bw"):
-		bigwig_file_path = args.output_prefix + "_unstranded.bw"
+	bigwig_file_path = args.output_prefix + "_unstranded.bw"
+	if os.path.exists(bigwig_file_path):
 		print(f"BigWig file {bigwig_file_path} has already been generated, using the present one")
 	else:
-		bigwig_file_path = args.output_prefix + "_unstranded.bw"
-		print(f"BigWig file {bigwig_file_path} not generated, going into reads_to_bigwig()")
-		reads_to_bigwig.main(args)
+		print(f"BigWig file {bigwig_file_path} not generated, going to check if the bigwig file is provided")
+		if args.bigwig is not None:
+			# Check if the provided bigwig file exists
+			if os.path.exists(args.bigwig):
+				print(f"Found provided bigwig file at {args.bigwig}, copying it to {bigwig_file_path}")
+				command = ['cp', args.bigwig, bigwig_file_path]
+				subprocess.run(command)
+			else:
+				print(f"Provided bigwig file {args.bigwig} not found! Insteadly generage one")
+				reads_to_bigwig.main(args)
+		else:
+			print(f"BigWig file {bigwig_file_path} not generated or provided, going into reads_to_bigwig()")
+			reads_to_bigwig.main(args)
 	
 	# QC bigwig
 	import chrombpnet.helpers.preprocessing.analysis.build_pwm_from_bigwig as build_pwm_from_bigwig	

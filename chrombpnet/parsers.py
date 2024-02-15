@@ -209,6 +209,8 @@ def read_parser():
         optional_bias_parser.add_argument("-dil", "--n-dilation-layers", type=int, default=4, help="Number of dilation layers to use in chrombpnet model")
         optional_bias_parser.add_argument("-j", "--max-jitter", type=int, default=0, help="Maximum jitter applied on either side of region (default 500 for chrombpnet model)")
         optional_bias_parser.add_argument("-bs", "--batch-size", type=int, default=64, help="batch size to use for model training")
+        # Jiaxin added a new parameter to take existing bigwig file
+        optional_bias_parser.add_argument("-bw", "--bigwig", type=str, default=None, help="Provided existing bigwig file from other folder, to save time of converting fragment/bam file to bigwig files.")
 
        # bias model training arguments
 
