@@ -112,7 +112,8 @@ def read_parser():
         optional_check_parser.add_argument('--no-st', required=False,  default=False, action='store_true', help="No streaming in preprocessing")
         optional_check_parser.add_argument("-pw","--pwm_width",type=int, default=24, required=False, help="width of pwm matrix")
         optional_check_parser.add_argument("--start_from_bigwig", type=bool, default=False, required=False, help="start from bigwig if the bigwig file has already been generated, for debug")
-
+        optional_check_parser.add_argument("--start_from_bigwig", type=bool, default=False, required=False, help="start from bigwig if the bigwig file has already been generated, for debug")
+        optional_check_parser.add_argument("--auto_detect", type=bool, default=True, required=False, help="If we should do auto detection in the pipeline")
 
 
         # Generate non-peak regions from peak-regions
@@ -225,7 +226,10 @@ def read_parser():
         optional_biast_parser.add_argument("-dil", "--n-dilation-layers", type=int, default=4, help="Number of dilation layers to use in chrombpnet model")
         optional_biast_parser.add_argument("-j", "--max-jitter", type=int, default=0, help="Maximum jitter applied on either side of region (default 500 for chrombpnet model)")
         optional_biast_parser.add_argument("-bs", "--batch-size", type=int, default=64, help="batch size to use for model training")
- 
+        
+        # Jiaxin added a new parameter to take existing bigwig file
+        optional_biast_parser.add_argument("-bw", "--bigwig", type=str, default=None, help="Provided existing bigwig file from other folder, to save time of converting fragment/bam file to bigwig files.")
+
        # bias model qc arguments
 
         bias_parser_qc._action_groups.pop()

@@ -112,11 +112,15 @@ def softmax(x, temp=1):
     norm_x = x - np.mean(x,axis=1, keepdims=True)
     return np.exp(temp*norm_x)/np.sum(np.exp(temp*norm_x), axis=1, keepdims=True)
 
-def load_model_wrapper(model_hdf5):
+def load_model_wrapper(model_hdf5, device='cpu'):
     # read .h5 model
     custom_objects={"multinomial_nll":losses.multinomial_nll, "tf": tf}    
-    get_custom_objects().update(custom_objects)    
-    model=load_model(model_hdf5, compile=False)
+    get_custom_objects().update(custom_objects)
+    if device == 'cpu':
+        with tf.device('/cpu:0'):
+            model = load_model(model_hdf5, compile=False)
+    else:    
+        model=load_model(model_hdf5, compile=False)
     print("got the model")
     model.summary()
     return model

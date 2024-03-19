@@ -46,7 +46,6 @@ def main(args):
     bw = pyBigWig.open(args.bigwig) 
 
     ## find given chromosome size
-
     chrom_sizes_dict = {line.strip().split("\t")[0]:int(line.strip().split("\t")[1]) for line in open(args.chrom_sizes).readlines()}
     chr_size = chrom_sizes_dict[args.chr]
 

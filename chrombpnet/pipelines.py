@@ -482,6 +482,8 @@ def checking_shift_pipeline(args):
 	Jiaxin added:
 	A function for pipeline to visualy check the different settings of plus shift and munus shift
 	To verify the results of auto_shift_compute
+	Mar 18 2024
+	Added option to do the autoshift detection
 	'''
 	import os
 
@@ -497,6 +499,10 @@ def checking_shift_pipeline(args):
 	
     # Shift bam and convert to bigwig
 	import chrombpnet.helpers.preprocessing.reads_to_bigwig as reads_to_bigwig
+	if args.auto_detection:
+		args.plus_shift = None
+		args.minus_shift = None
+		
 	args.output_prefix = os.path.join(args.output_dir,f"auxiliary/{fpx}data")
 	if not args.start_from_bigwig:
 		print("Convert the reads to bigwig!")

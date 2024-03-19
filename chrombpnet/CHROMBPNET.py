@@ -81,8 +81,18 @@ def main():
 			pipelines.train_bias_pipeline(args)
 		
 		elif args.cmd_bias == "qc":
-			os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=False)
-			os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=False)
+			"""
+			Jiaxin edited at Mar 05
+			"""
+			if os.path.exists(os.path.join(args.output_dir,"auxiliary")):
+				print("auxiliary directory has already exist, please double check!")
+			else:
+				os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=False)
+				
+			if os.path.exists(os.path.join(args.output_dir,"evaluation")):
+				print("evaluation directory has already exist, please double check!")
+			else:
+				os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=False)
 			
 			pipelines.bias_model_qc(args)
 			
